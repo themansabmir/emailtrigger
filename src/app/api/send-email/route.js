@@ -5,7 +5,7 @@ import pug from "pug";
 import path from "path";
 const xlsx = require("xlsx");
 const renderTemplate = (templateFileName, data) => {
-  const templatePath = path.resolve(__dirname, templateFileName); // this is the fix
+  const templatePath = path.join(process.cwd(), "public", templateFileName);
   const compiledFunction = pug.compileFile(templatePath);
   return compiledFunction(data);
 };
