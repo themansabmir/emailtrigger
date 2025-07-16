@@ -1,12 +1,73 @@
 doctype html
 html
   head
-    style
-      include ./style.css
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    style.
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f6f6f6;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background-color: #ffffff;
+        padding: 40px 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .header {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #111827;
+      }
+
+      .highlight {
+        color: #2563eb;
+        font-weight: bold;
+      }
+
+      .btn {
+        display: inline-block;
+        margin-top: 24px;
+        padding: 12px 24px;
+        background-color: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+      }
+
+      .footer {
+        font-size: 12px;
+        color: #999;
+        margin-top: 40px;
+        text-align: center;
+      }
+
   body
     .container
-      h1 Hello,
-      p I create beautiful websites, softwares, mobile apps for business seo and other digital services.
-      p If you are interested, please let me know.
-      p Thanks,
-      p Jules
+      if recipientName
+        .header Hello #{recipientName},
+      else
+        .header Hello,
+
+      p We specialize in building <span class="highlight">high-performing websites, mobile apps, and software</span> for growing businesses.
+
+      p Whether you're looking to improve your online presence, increase conversions, or automate operations — we've got you covered.
+
+      p Would you be open to a quick 15-minute call to discuss how we can help your business grow?
+
+      a.btn(href="mailto:your@email.com?subject=Interested in Services") Let's Chat
+
+      p Thanks,<br />Jules<br /><span style="font-size: 13px; color: #666;">Digital Product Consultant</span>
+
+      .footer
+        | You received this email because we believe your business can benefit from our digital solutions.
