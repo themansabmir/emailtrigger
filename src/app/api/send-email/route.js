@@ -4,9 +4,10 @@ import nodemailer from "nodemailer";
 import pug from "pug";
 import path from "path";
 const xlsx = require("xlsx");
-const renderTemplate = (templatePath, options) => {
-  const absolutePath = path.resolve(process.cwd(), templatePath);
-  return pug.renderFile(absolutePath, options);
+const renderTemplate = (templateFileName, data) => {
+  const templatePath = path.resolve(__dirname, templateFileName); // this is the fix
+  const compiledFunction = pug.compileFile(templatePath);
+  return compiledFunction(data);
 };
 
 export async function POST(request) {
@@ -31,8 +32,7 @@ export async function POST(request) {
     .map((row) => row[0])
     .filter((email) => typeof email === "string" && email.includes("@"));
 
-
-  console.log(emails)
+  console.log(emails);
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: parseInt(process.env.SMTP_PORT),
@@ -46,9 +46,7 @@ export async function POST(request) {
   const results = [];
 
   const sendEmail = async (email) => {
-    const html = renderTemplate("src/app/api/send-email/template.pug", {
-      email,
-    });
+    const html = renderTemplate("template.pug", { email }); // just the file name now
     await transporter.sendMail({
       from: process.env.SMTP_FROM,
       to: email,
