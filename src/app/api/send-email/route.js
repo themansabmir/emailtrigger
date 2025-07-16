@@ -52,8 +52,7 @@ export async function POST(request) {
     await transporter.sendMail({
       from: process.env.SMTP_FROM,
       to: email,
-      subject:
-        "Beautiful Websites, Software, and Mobile Apps for Your Business",
+      subject: "AI-Driven Tech That Moves Your Business Forward",
       html,
     });
   };
