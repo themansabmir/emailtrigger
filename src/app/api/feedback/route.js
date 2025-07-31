@@ -7,7 +7,7 @@ export async function POST(req) {
   try {
     await dbConnect();
 
-    const { rating, comment, businessId } from await req.json();
+    const { rating, comment, businessId } = await req.json();
 
     if (!rating || !businessId) {
       return NextResponse.json({ error: 'Rating and businessId are required.' }, { status: 400 });

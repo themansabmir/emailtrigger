@@ -29,6 +29,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useState } from 'react';
+import { Label } from '@/components/ui/label';
+import {Button} from '@/components/ui/button';
 
 async function fetchFeedbackForBusiness(slug) {
   const res = await fetch(`/api/feedback/${slug}`);
@@ -82,6 +84,37 @@ export default function FeedbackViewerPage() {
   }
 
   const { business } = data || {};
+
+  const exportToCsv = (feedbacks, businessName) => {
+    if (feedbacks.length === 0) {
+      return;
+    }
+
+    const fields = [
+      { label: 'Date', value: 'createdAt' },
+      { label: 'Rating', value: 'rating' },
+      { label: 'Comment', value: 'comment' }
+    ];
+    
+    const transformedFeedbacks = feedbacks.map(fb => ({
+      ...fb,
+      createdAt: new Date(fb.createdAt).toLocaleDateString()
+    }));
+
+    const json2csvParser = new Parser({ fields });
+    const csv = json2csvParser.parse(transformedFeedbacks);
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    const safeBusinessName = businessName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    link.setAttribute('download', `feedback_for_${safeBusinessName}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
