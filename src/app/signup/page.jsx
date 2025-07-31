@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,20 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // If the user is already authenticated, redirect to the dashboard.
-    if (status === 'authenticated') {
-      router.push('/dashboard');
-    }
-  }, [status, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,16 +21,17 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (res?.error) {
-        setError('Invalid credentials. Please try again.');
-      } else if (res?.ok) {
-        router.push('/dashboard');
+      if (res.ok) {
+        router.push('/'); // Redirect to login page on successful signup
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Something went wrong.');
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -49,19 +41,13 @@ export default function LoginPage() {
     }
   };
 
-  // While session status is loading, show a loading indicator.
-  // This also prevents a flash of the login form if the user is already logged in.
-  if (status === 'loading' || status === 'authenticated') {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
-  }
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Sign Up</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account.
+            Enter your email below to create your account.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -75,7 +61,6 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
               />
             </div>
             <div className="grid gap-2">
@@ -86,18 +71,17 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Creating account...' : 'Create account'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline">
-              Sign up
+            Already have an account?{' '}
+            <Link href="/" className="underline">
+              Log in
             </Link>
           </div>
         </CardContent>
